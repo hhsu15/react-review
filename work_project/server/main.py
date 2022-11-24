@@ -1,19 +1,30 @@
-from fastapi import FastAPI
+from pickletools import read_uint1
+from fastapi import FastAPI, Request
 from io import BytesIO
 import logging
 from typing import Union, Dict
 from pydantic import BaseModel
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+
 
 import openpyxl
 
 from fastapi import FastAPI, File, Form, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 app = FastAPI()
+
+app.mount(
+    "/static", StaticFiles(directory="../excel-loader/build/static"), name="static"
+)
+templates = Jinja2Templates(directory="../excel-loader/build")
+
 
 origins = ["*"]
 
@@ -26,13 +37,25 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def root():
-    return {"message": "Let's fly"}
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+class Item(BaseModel):
+    des: str
+    name: Union[str, None] = None
+
+
+@app.post("/api/{item_id}/transform")
+def transform(item_id: int, item: Item, a: str, b: str):
+    """Some sort of transform task."""
+    print(item)
+    return {**item.dict(), "data": "ok"}
 
 
 @app.post("/api/diff")
-async def upload_files(baseFile: UploadFile, compareToFile: UploadFile) -> dict:
+async def diff_files(baseFile: UploadFile, compareToFile: UploadFile) -> dict:
 
     result = {"message": None}
     logger.info(
