@@ -12,7 +12,12 @@ function FileUploader({ onFilesSelect, target, description }) {
     <form>
       <label htmlFor="images" className="drop-container">
         <span className="drop-title">{description}</span>
-        <input type="file" required onChange={handleFileInput} />
+        <input
+          type="file"
+          required
+          onChange={handleFileInput}
+          accept=".xlsx, .csv"
+        />
       </label>
     </form>
   );
