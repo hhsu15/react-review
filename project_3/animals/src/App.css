@@ -1,0 +1,21 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button {
+  background-color: lightgreen;
+  border: 1px solid green;
+  font-size: 20px;
+  padding: 10px;
+  width: 30%;
+}
+
+/* Alight next to each other and start with the center of the screen */
+.animal-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
