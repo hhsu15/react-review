@@ -1,19 +1,21 @@
 """Endpoints for diffing two files."""
-
-
 import logging
 from io import BytesIO
 
 import openpyxl
-from fastapi import APIRouter, UploadFile
+from fastapi import APIRouter, UploadFile, File
+from fastapi.responses import StreamingResponse
+
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/diff", tags=["diffs"])
+router = APIRouter(prefix="/api/diff", tags=["diff"])
 
 
 @router.post("/")
-async def diff_files(baseFile: UploadFile, compareToFile: UploadFile) -> dict:
+async def diff_files(
+    baseFile: UploadFile = File(...), compareToFile: UploadFile = File(...)
+) -> dict:
 
     result = {"message": None}
 
@@ -45,3 +47,16 @@ def diff(base_wb, comp_wb):
     """Perfom diffing logics here."""
     ...
     return "Diffing Completed!!"
+
+
+@router.get("/get-file")
+async def get_excel():
+    wb = openpyxl.Workbook()
+    wb.create_sheet("Mysheet")
+    virtual_workbook = BytesIO()
+    wb.save(virtual_workbook)
+    virtual_workbook.seek(0)
+    filename = "my_excel.xlsx"
+    headers = {"Content-Disposition": f"attachment; filename={filename}"}
+
+    return StreamingResponse(virtual_workbook, headers=headers)

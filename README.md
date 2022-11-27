@@ -157,3 +157,23 @@ const searchImages = async () => {
   return response;
 };
 ```
+
+## Communicate from child to parent component
+
+When you have input element within a form, if user clicks on "enter" it will automatically trigger the submit event. If you have a button in the form it will do the same by default.
+
+```js
+function SearchBar() {
+  const handleSubmit = event => {
+    event.reventDefault(); // use this to prevent the default submit behavior
+    console.log('I need to tell parent about something');
+  };
+}
+return (
+  <div>
+    <form onSubmit={handleSubmit}>
+      <input type="text" onChange />
+    </form>
+  </div>
+);
+```

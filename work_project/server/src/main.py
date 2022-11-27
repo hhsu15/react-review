@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .routers import diffs, transform
+from .routers import diff, transform
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ app.mount(
 templates = Jinja2Templates(directory="../excel-loader/build")
 
 # include routers/blueprints
-app.include_router(diffs.router)
+app.include_router(diff.router)
 app.include_router(transform.router)
 
 origins = ["*"]

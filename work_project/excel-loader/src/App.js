@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import FileUploader from './components/FileUploader';
+import NavBar from './components/NavBar';
 import fileProcessApi from './api/fileProcessApi';
+import Modal from './components/Modal';
 import 'bulma/css/bulma.css';
 import './App.css';
 
@@ -10,12 +12,20 @@ function App() {
     compareToFile: null
   });
   const [message, setMessage] = useState('');
+  const [modalStatus, setModalStatus] = useState('');
+  const [downloadDisabled, setdownloadDisabled] = useState(true);
 
   const onFilesSelect = target => {
     setSelectedFiles({ ...selectedFiles, ...target });
   };
 
   const onFilesSubmit = async () => {
+    setModalStatus('is-active');
+
+    // reset button status
+    setMessage('');
+    setdownloadDisabled(true);
+
     const formData = new FormData();
 
     const { baseFile, compareToFile } = selectedFiles;
@@ -31,6 +41,7 @@ function App() {
 
       if (res.status === 200) {
         setMessage(res.data.message);
+        setdownloadDisabled(false);
       } else setMessage('Some error happened');
     } else {
       setMessage('Please select both files.');
@@ -39,26 +50,34 @@ function App() {
 
   return (
     <div>
-      <div className="app">
-        <FileUploader
-          target="baseFile"
-          description="Base File"
-          onFilesSelect={target =>
-            setSelectedFiles({ ...selectedFiles, ...target })
-          }
-        />
-        <FileUploader
-          target="compareToFile"
-          description="Compare to File"
-          onFilesSelect={onFilesSelect}
-        />
-
-        <button className="button is-primary" onClick={onFilesSubmit}>
-          Submit
-        </button>
-      </div>
+      <NavBar />
       <div>
-        <p>{message}</p>
+        <div className="app">
+          <FileUploader
+            target="baseFile"
+            description="Base File"
+            onFilesSelect={target =>
+              setSelectedFiles({ ...selectedFiles, ...target })
+            }
+          />
+          <FileUploader
+            target="compareToFile"
+            description="Compare to File"
+            onFilesSelect={onFilesSelect}
+          />
+
+          <button className="button is-primary" onClick={onFilesSubmit}>
+            Submit
+          </button>
+        </div>
+        <div>
+          <Modal
+            modalSatus={modalStatus}
+            handleModalStatus={setModalStatus}
+            message={message}
+            downloadDisabled={downloadDisabled}
+          />
+        </div>
       </div>
     </div>
   );

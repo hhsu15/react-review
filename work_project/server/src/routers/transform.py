@@ -37,7 +37,7 @@ class MyService:
         return "Some data retrieved"
 
 
-@router.get("/try_di")
+@router.get("/try-di")
 def try_di(
     mysvc: MyService = Depends(),
 ):  # short for mysvc: MyService = Depends(MyService)
