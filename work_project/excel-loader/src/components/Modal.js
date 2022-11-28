@@ -4,7 +4,8 @@ export function Modal({
   modalSatus,
   handleModalStatus,
   message,
-  downloadDisabled
+  downloadDisabled,
+  resultFile
 }) {
   return (
     <div className={`modal ${modalSatus}`}>
@@ -22,7 +23,7 @@ export function Modal({
         </header>
         <section className="modal-card-body is-loading">{message}</section>
         <footer className="modal-card-foot">
-          <DownloadFile disabled={downloadDisabled} />
+          <DownloadFile disabled={downloadDisabled} resultFile={resultFile} />
 
           <button
             className="button"

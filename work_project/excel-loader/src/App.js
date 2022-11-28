@@ -14,37 +14,56 @@ function App() {
   const [message, setMessage] = useState('');
   const [modalStatus, setModalStatus] = useState('');
   const [downloadDisabled, setdownloadDisabled] = useState(true);
+  const [resultFile, setResultFile] = useState(null);
 
   const onFilesSelect = target => {
     setSelectedFiles({ ...selectedFiles, ...target });
   };
 
   const onFilesSubmit = async () => {
-    setModalStatus('is-active');
+    /*
+    Currently there is no intermediate file saved anywhere, not even in memory
+    on clicking submit button it will 
+    1. reset the states for message and download button 
+       -> message ""
+       -> download buttton "disabled"
+    2. make sure both files are slected then
+       -> set message -> "processing"
+    3. call api to perform diffing and retrieve file stream
+    4. once successed, update resultFile state with the file stream
+    5. update message state -> "process completed"
+    */
 
-    // reset button status
+    setModalStatus('is-active');
     setMessage('');
     setdownloadDisabled(true);
 
     const formData = new FormData();
-
     const { baseFile, compareToFile } = selectedFiles;
 
-    if (baseFile && compareToFile) {
-      formData.append('baseFile', baseFile);
-      formData.append('compareToFile', compareToFile);
+    if (!(baseFile && compareToFile)) {
+      setMessage('Plesae select both files.');
+      return;
+    }
 
-      const endpoint = './diff';
-      const res = await fileProcessApi.post(endpoint, formData);
+    setMessage('Processing...'); // TODO: add a loader
+    formData.append('baseFile', baseFile);
+    formData.append('compareToFile', compareToFile);
 
-      console.log(res);
-
+    // post files for processing and get back result file
+    try {
+      const res = await fileProcessApi.post('./diff/get-diff-file', formData, {
+        responseType: 'arraybuffer'
+      });
       if (res.status === 200) {
-        setMessage(res.data.message);
+        // set the states once the output file is ready
+        setResultFile(res.data);
         setdownloadDisabled(false);
-      } else setMessage('Some error happened');
-    } else {
-      setMessage('Please select both files.');
+        setMessage('Process completed!');
+      } else setMessage(`Some error happened:${res}`);
+    } catch (err) {
+      console.log(err);
+      setMessage(`Error occured during the process: ${err}`);
     }
   };
 
@@ -76,6 +95,7 @@ function App() {
             handleModalStatus={setModalStatus}
             message={message}
             downloadDisabled={downloadDisabled}
+            resultFile={resultFile}
           />
         </div>
       </div>

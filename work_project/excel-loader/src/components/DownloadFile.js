@@ -1,13 +1,16 @@
-import fileProcessApi from '../api/fileProcessApi';
-
-function DownloadFile({ disabled }) {
+function DownloadFile({ disabled, resultFile }) {
   const getDownloadFile = async () => {
+    // on button lick it should take the file from the state
+    // then create a download file element
     try {
-      const response = await fileProcessApi.get('diff/get-file');
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(
+        new Blob([resultFile], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+      );
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'test_download_file.xlsx');
+      link.setAttribute('download', 'test_excel.xlsx');
       document.body.appendChild(link);
       link.click();
     } catch (err) {
@@ -20,7 +23,7 @@ function DownloadFile({ disabled }) {
       onClick={getDownloadFile}
       disabled={disabled}
     >
-      Doanload Excel file
+      Doanload summary file
     </button>
   );
 }

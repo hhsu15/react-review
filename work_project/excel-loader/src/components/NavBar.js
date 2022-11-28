@@ -1,15 +1,12 @@
+import logo from '../images/nav_logo.png'; //
+
 function NavBar() {
   return (
     <div>
       <nav className="navbar" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
-          <a className="navbar-item" href="https://bulma.io">
-            <img
-              src="https://bulma.io/images/bulma-logo.png"
-              width="112"
-              height="28"
-              alt="image"
-            />
+          <a className="navbar-item" href="/">
+            <img src={logo} width="112" height="28" alt="lseg logo" />
           </a>
 
           <a
@@ -18,7 +15,6 @@ function NavBar() {
             className="navbar-burger"
             aria-label="menu"
             aria-expanded="false"
-            data-target="navbarBasicExample"
           >
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -29,11 +25,11 @@ function NavBar() {
         <div id="navbarBasicExample" className="navbar-menu">
           <div className="navbar-start">
             <a href="/#" className="navbar-item">
-              Home
+              Compare Workbooks
             </a>
 
             <a href="/#" className="navbar-item">
-              Documentation
+              File Transformation
             </a>
 
             <div className="navbar-item has-dropdown is-hoverable">
@@ -44,12 +40,6 @@ function NavBar() {
               <div className="navbar-dropdown">
                 <a href="/#" className="navbar-item">
                   About
-                </a>
-                <a href="/#" className="navbar-item">
-                  Jobs
-                </a>
-                <a href="/#" className="navbar-item">
-                  Contact
                 </a>
                 <hr className="navbar-divider" />
                 <a href="/#" className="navbar-item">
@@ -62,11 +52,11 @@ function NavBar() {
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
-                <a href="/#" class="button is-primary">
+                {/* <a href="/#" class="button is-primary">
                   <strong>Sign up</strong>
-                </a>
+                </a> */}
                 <a href="/#" class="button is-light">
-                  Log in
+                  Help
                 </a>
               </div>
             </div>

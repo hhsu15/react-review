@@ -12,45 +12,43 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/diff", tags=["diff"])
 
 
-@router.post("/")
+@router.post("/get-diff-file")
 async def diff_files(
     baseFile: UploadFile = File(...), compareToFile: UploadFile = File(...)
 ) -> dict:
-
-    result = {"message": None}
 
     logger.info(
         f"Receieving input files.\n  Base File:{baseFile.filename}\n  Compare to file: {compareToFile.filename}"
     )
 
-    if not (baseFile and compareToFile):
-        result["message"] = "Need two files to perform comparison"
-        return result
-
     # convert files to Excel object
     base_wb, compare_to_wb = [await convert_to_xl(f) for f in [baseFile, compareToFile]]
     diff_result = diff(base_wb, compare_to_wb)
-    result["message"] = diff_result
 
-    return result
+    return diff_result
 
 
 async def convert_to_xl(file: UploadFile):
     """Convert file stream to openpyxl obj."""
     content = await file.read()
     wb = openpyxl.load_workbook(filename=BytesIO(content))
-    print(wb.sheetnames)
+    logger.info(wb.sheetnames)
     return wb
 
 
 def diff(base_wb, comp_wb):
     """Perfom diffing logics here."""
-    ...
-    return "Diffing Completed!!"
+    # some code here to comare two files
+    # ...
+
+    # provide output
+    logger.info("Get streaming...")
+    stream_res = _make_fake_wb()
+
+    return stream_res
 
 
-@router.get("/get-file")
-async def get_excel():
+def _make_fake_wb():
     wb = openpyxl.Workbook()
     wb.create_sheet("Mysheet")
     virtual_workbook = BytesIO()
@@ -60,3 +58,10 @@ async def get_excel():
     headers = {"Content-Disposition": f"attachment; filename={filename}"}
 
     return StreamingResponse(virtual_workbook, headers=headers)
+
+
+@router.get("/get-file")
+async def get_excel():
+    """Just POC code."""
+
+    return _make_fake_wb()
