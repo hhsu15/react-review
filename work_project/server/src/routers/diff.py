@@ -3,7 +3,7 @@ import logging
 from io import BytesIO
 
 import openpyxl
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 
 
@@ -14,16 +14,16 @@ router = APIRouter(prefix="/api/diff", tags=["diff"])
 
 @router.post("/get-diff-file")
 async def diff_files(
-    baseFile: UploadFile = File(...), compareToFile: UploadFile = File(...)
+    baseFile: UploadFile = File(...), compareFile: UploadFile = File(...)
 ) -> dict:
 
     logger.info(
-        f"Receieving input files.\n  Base File:{baseFile.filename}\n  Compare to file: {compareToFile.filename}"
+        f"Receieving input files.\n  Base File:{baseFile.filename}\n  Compare to file: {compareFile.filename}"
     )
 
     # convert files to Excel object
-    base_wb, compare_to_wb = [await convert_to_xl(f) for f in [baseFile, compareToFile]]
-    diff_result = diff(base_wb, compare_to_wb)
+    base_wb, compare_wb = [await convert_to_xl(f) for f in [baseFile, compareFile]]
+    diff_result = diff(base_wb, compare_wb)
 
     return diff_result
 
@@ -50,7 +50,11 @@ def diff(base_wb, comp_wb):
 
 def _make_fake_wb():
     wb = openpyxl.Workbook()
-    wb.create_sheet("Mysheet")
+    st = wb.active
+    st.title = "Summary"
+    st["A1"].value = "Additons"
+    st["A2"].value = "Deletions"
+
     virtual_workbook = BytesIO()
     wb.save(virtual_workbook)
     virtual_workbook.seek(0)

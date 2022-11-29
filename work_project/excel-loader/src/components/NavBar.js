@@ -51,14 +51,14 @@ function NavBar() {
 
           <div class="navbar-end">
             <div class="navbar-item">
-              <div class="buttons">
-                {/* <a href="/#" class="button is-primary">
+              {/* <div class="buttons"> */}
+              {/* <a href="/#" class="button is-primary">
                   <strong>Sign up</strong>
                 </a> */}
-                <a href="/#" class="button is-light">
-                  Help
-                </a>
-              </div>
+              <a href="/#" class="navbar-item">
+                Help
+              </a>
+              {/* </div> */}
             </div>
           </div>
         </div>

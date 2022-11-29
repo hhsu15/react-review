@@ -10,7 +10,7 @@ function DownloadFile({ disabled, resultFile }) {
       );
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'test_excel.xlsx');
+      link.setAttribute('download', 'summary.xlsx');
       document.body.appendChild(link);
       link.click();
     } catch (err) {

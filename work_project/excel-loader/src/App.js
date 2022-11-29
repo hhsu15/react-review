@@ -9,7 +9,7 @@ import './App.css';
 function App() {
   const [selectedFiles, setSelectedFiles] = useState({
     baseFile: null,
-    compareToFile: null
+    compareFile: null
   });
   const [message, setMessage] = useState('');
   const [modalStatus, setModalStatus] = useState('');
@@ -39,16 +39,16 @@ function App() {
     setdownloadDisabled(true);
 
     const formData = new FormData();
-    const { baseFile, compareToFile } = selectedFiles;
+    const { baseFile, compareFile } = selectedFiles;
 
-    if (!(baseFile && compareToFile)) {
+    if (!(baseFile && compareFile)) {
       setMessage('Plesae select both files.');
       return;
     }
 
     setMessage('Processing...'); // TODO: add a loader
     formData.append('baseFile', baseFile);
-    formData.append('compareToFile', compareToFile);
+    formData.append('compareFile', compareFile);
 
     // post files for processing and get back result file
     try {
@@ -56,7 +56,6 @@ function App() {
         responseType: 'arraybuffer'
       });
       if (res.status === 200) {
-        // set the states once the output file is ready
         setResultFile(res.data);
         setdownloadDisabled(false);
         setMessage('Process completed!');
@@ -80,8 +79,8 @@ function App() {
             }
           />
           <FileUploader
-            target="compareToFile"
-            description="Compare to File"
+            target="compareFile"
+            description="Compare File"
             onFilesSelect={onFilesSelect}
           />
 
