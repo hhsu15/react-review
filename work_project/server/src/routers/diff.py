@@ -1,9 +1,11 @@
-"""Endpoints for diffing two files."""
+"""Endpoints for diffing functionalities."""
 import logging
 from io import BytesIO
 
+from ..utils import load_wb
+
 import openpyxl
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import StreamingResponse
 
 
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/api/diff", tags=["diff"])
 @router.post("/get-diff-file")
 async def diff_files(
     baseFile: UploadFile = File(...), compareFile: UploadFile = File(...)
-) -> dict:
+):
 
     logger.info(
         f"Receieving input files.\n  Base File:{baseFile.filename}\n  Compare to file: {compareFile.filename}"
@@ -31,7 +33,7 @@ async def diff_files(
 async def convert_to_xl(file: UploadFile):
     """Convert file stream to openpyxl obj."""
     content = await file.read()
-    wb = openpyxl.load_workbook(filename=BytesIO(content))
+    wb = load_wb(filename=BytesIO(content))
     logger.info(wb.sheetnames)
     return wb
 
