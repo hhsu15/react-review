@@ -5,8 +5,11 @@ import fileProcessApi from './api/fileProcessApi';
 import Modal from './components/Modal';
 import 'bulma/css/bulma.css';
 import './App.css';
+import { connect } from 'react-redux';
+import { diffFiles } from './actions';
 
-function App() {
+function App({ selectedFilesFromStore, diffFiles }) {
+  console.log('my files from store', selectedFilesFromStore);
   const [selectedFiles, setSelectedFiles] = useState({
     baseFile: null,
     compareFile: null
@@ -41,16 +44,19 @@ function App() {
     const formData = new FormData();
     const { baseFile, compareFile } = selectedFiles;
 
-    if (!(baseFile && compareFile)) {
+    if (
+      !(selectedFilesFromStore.baseFile && selectedFilesFromStore.compareFile)
+    ) {
       setMessage('Plesae select both files.');
       return;
     }
 
     setMessage('Processing...'); // TODO: add a loader
-    formData.append('baseFile', baseFile);
-    formData.append('compareFile', compareFile);
+    formData.append('baseFile', selectedFilesFromStore.baseFile);
+    formData.append('compareFile', selectedFilesFromStore.compareFile);
 
     // post files for processing and get back result file
+    const response = await diffFiles(formData);
     try {
       const res = await fileProcessApi.post('./diff/get-diff-file', formData, {
         responseType: 'arraybuffer'
@@ -71,6 +77,15 @@ function App() {
       <NavBar />
       <div>
         <div className="app">
+          <div>
+            Please Select the files you would like to compare.
+            efefefefefefefefefefefefefe
+          </div>
+          <div>
+            Please Select the files you would like to compare.
+            efefefefefefefefefefefefefe
+            <p>This is very important</p>
+          </div>
           <FileUploader
             target="baseFile"
             description="Base File"
@@ -102,4 +117,12 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  console.log('state for the App', state);
+  return {
+    selectedFilesFromStore: state.selectedFile,
+    diffResult: state.file
+  };
+};
+
+export default connect(mapStateToProps, { diffFiles })(App);
