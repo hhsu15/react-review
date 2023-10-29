@@ -1,13 +1,13 @@
 """Endpoints for diffing functionalities."""
 import logging
-from io import BytesIO
+from io import BytesIO, StringIO
 
 from ..utils import load_wb
 
 import openpyxl
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import StreamingResponse
-
+import csv
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +23,28 @@ async def diff_files(
         f"Receieving input files.\n  Base File:{baseFile.filename}\n  Compare to file: {compareFile.filename}"
     )
 
+    # csv handler here
+    if baseFile.filename.endswith(".csv") and compareFile.filename.endswith(".csv"):
+        print("Use CSV handler...")
+        # read the file using csv
+        base_content = await baseFile.read()
+        compare_content = await compareFile.read()
+        base_buffer = StringIO(base_content.decode("utf-8"))
+        # need to skip rows
+        for i in range(3):
+            next(base_buffer)
+
+        compare_buffer = StringIO(compare_content.decode("utf-8"))
+
+        csvReader = csv.DictReader(base_buffer)
+        for row in csvReader:
+            print(row)
+
+        return
     # convert files to Excel object
-    base_wb, compare_wb = [await convert_to_xl(f) for f in [baseFile, compareFile]]
-    diff_result = diff(base_wb, compare_wb)
+    else:
+        base_wb, compare_wb = [await convert_to_xl(f) for f in [baseFile, compareFile]]
+        diff_result = diff(base_wb, compare_wb)
 
     return diff_result
 

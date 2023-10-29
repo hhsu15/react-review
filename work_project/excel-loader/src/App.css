@@ -3,3 +3,7 @@
   flex-direction: column;
   align-items: center;
 }
+
+.bulma-loader-mixin {
+  @include loader;
+}

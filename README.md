@@ -2,7 +2,7 @@
 
 ## Get started
 
-Just for me to refresh React.
+Just to refresh React. We will be using hooks rather than class components.
 
 To create a react project
 
@@ -160,7 +160,7 @@ const searchImages = async () => {
 
 ## Communicate from child to parent component
 
-When you have input element within a form, if user clicks on "enter" it will automatically trigger the submit event. If you have a button in the form it will do the same by default.
+When you have input element within a form, if user clicks on "enter" it will automatically trigger the submit event. If you have a button in the form it will do the same submit behavior by default. So it's convenient to use a form compared to just plain input.
 
 ```js
 function SearchBar() {
@@ -177,3 +177,120 @@ return (
   </div>
 );
 ```
+
+## UseContext
+
+To share data to children components.
+
+Here are the steps to use useContext.
+
+1. Create a context provider component
+
+```javascript
+import { createContext } from 'react';
+
+const MyContext = createContext();
+```
+
+To use it, you will write out someting like this:
+
+```
+<MyContext.Provider />
+```
+
+2. Specify the data you want to share, using the 'value' prop.
+
+```javascript
+<MyContext.Provider value={10}>
+  <MyComponent />
+</MyContext.Provider>
+```
+
+So we end up often just put the provider at top and just wrap all the children.
+
+3. Receive the data inside a child component, by using useContext
+
+```javascript
+import {useContext} from 'react'
+import MyContext from "./components"
+
+function MyComponent () {
+  const num = useContext(MyContext)
+  ...
+}
+```
+
+So usually if we can decide what states we need to share (refered to as Applicaiton states), we can create a custom Provider component like this which is pretty elegant!
+
+```js
+import { createContext, useState } from 'react';
+
+const MyContext = createContext();
+
+function Provider({ children }) {
+  const [someState, setSomeState] = useState('hi');
+
+  const valueToShare = {
+    someState: someState
+    somefunc: () => setSomeState("there!")
+  };
+  return <MyContext.Provider value={valueToState}>{children}</MyContext.Provider>
+}
+export {Provider}
+export default MyContext;
+
+// this way you can import like this:
+// import MyContext, {Provider} from "./components/path"
+```
+
+So to provider the context you might have something like this..
+
+```js
+import App from "./App"
+import {Provider} from "./somewhere"
+
+...
+
+return (
+  <Provider>
+    <App>
+  </Provider>
+)
+```
+
+And to receive the context in one of the children components, you might have something like this...
+
+```js
+import { useContext } from 'react';
+import MyContext from '../some/where';
+
+function SomeChildComponent() {
+  const {someState, someFunc} = useContext(MyContext);
+  ...
+}
+```
+
+# Custom Hooks
+
+For reusable logics you can create custom hooks to make the code cleaner. Say if you have this piece of code in many places...
+
+```javascript
+import {useContext} from 'react'
+import MyContext from "./components"
+
+...
+const num = useContext(MyContext)
+
+```
+
+You can create a custom hook for this:
+
+```javascript
+// useBookContext
+
+function useMyContext() {
+  return useContext(MyContext);
+}
+```
+
+Then you can just use this useMyContext hook everywhere in your code.

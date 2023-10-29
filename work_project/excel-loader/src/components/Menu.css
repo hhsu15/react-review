@@ -1,3 +1,8 @@
-.menu-comp {
-  margin: 30px 40px;
+.sidebar {
+  height: 100%;
+  width: 200px;
+  background-color: aqua;
+  position: fixed !important;
+  z-index: 1;
+  overflow: auto;
 }

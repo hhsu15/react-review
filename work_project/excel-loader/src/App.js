@@ -7,6 +7,7 @@ import 'bulma/css/bulma.css';
 import './App.css';
 import { connect } from 'react-redux';
 import { diffFiles } from './actions';
+import Menu from './components/Menu';
 
 function App({ selectedFilesFromStore, diffFiles }) {
   console.log('my files from store', selectedFilesFromStore);
@@ -75,44 +76,61 @@ function App({ selectedFilesFromStore, diffFiles }) {
   return (
     <div>
       <NavBar />
-      <div>
-        <div className="app">
-          <div>
-            Please Select the files you would like to compare.
-            efefefefefefefefefefefefefe
-          </div>
-          <div>
-            Please Select the files you would like to compare.
-            efefefefefefefefefefefefefe
-            <p>This is very important</p>
-          </div>
-          <FileUploader
-            target="baseFile"
-            description="Base File"
-            onFilesSelect={target =>
-              setSelectedFiles({ ...selectedFiles, ...target })
-            }
-          />
-          <FileUploader
-            target="compareFile"
-            description="Compare File"
-            onFilesSelect={onFilesSelect}
-          />
 
-          <button className="button is-primary" onClick={onFilesSubmit}>
-            Submit
-          </button>
+      <Menu />
+
+      <div className="app">
+        <div>
+          Please Select the files you would like to compare.
+          efefefefefefefefefefefefefe
+        </div>
+        <div class="control is-loading is-large">
+          <p></p>
+        </div>
+
+        <div>
+          Please Select the files you would like to compare.
+          efefefefefefefefefefefefefe
+          <p>This is very important</p>
         </div>
         <div>
-          <Modal
-            modalSatus={modalStatus}
-            handleModalStatus={setModalStatus}
-            message={message}
-            downloadDisabled={downloadDisabled}
-            resultFile={resultFile}
-          />
+          <input
+            type="file"
+            id="filepicker"
+            name="filelist"
+            webkitdirectory
+            multiple
+          ></input>
         </div>
+        <FileUploader
+          target="baseFile"
+          description="Base File"
+          onFilesSelect={target =>
+            setSelectedFiles({ ...selectedFiles, ...target })
+          }
+        />
+
+        <FileUploader
+          target="compareFile"
+          description="Compare File"
+          onFilesSelect={onFilesSelect}
+        />
+
+        <button className="button is-primary" onClick={onFilesSubmit}>
+          Submit
+        </button>
+        <div>Loader!!!!</div>
       </div>
+      <div>
+        <Modal
+          modalSatus={modalStatus}
+          handleModalStatus={setModalStatus}
+          message={message}
+          downloadDisabled={downloadDisabled}
+          resultFile={resultFile}
+        />
+      </div>
+      <div></div>
     </div>
   );
 }
